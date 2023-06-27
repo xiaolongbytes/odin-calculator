@@ -1,0 +1,86 @@
+@font-face {
+    font-family: "LCD";
+    src: URL('LCD-N___.TTF') format("truetype");
+}
+
+body {
+    background-color:blanchedalmond;
+}
+
+.calculator-body {
+    background-color: rgb(76, 132, 199);
+    width: 600px;
+    height: 800px;
+    margin: auto;
+    margin-top: 30px;
+    border: solid rgb(99, 140, 193) 5px;
+    border-radius: 20px;
+}
+
+#display {
+    background-color: lightgrey;
+    width: 540px;
+    margin: auto;
+    margin-top: 25px;
+    border: solid lightslategray 2px;
+    border-radius: 10px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    font-weight: bold;
+    font-size: 50px;
+    font-family: "LCD";
+}
+
+#input {
+    text-align: start;
+    padding: 20px 20px 0px 20px;
+}
+
+#results {
+    text-align: end;
+    padding: 10px 20px 10px 20px;
+}
+
+#buttons-container {
+    display: flex;
+    margin: auto;
+    margin-top: 40px;
+    flex-direction: column;
+    width: 540px;
+    height: 540px ;
+    justify-content: space-around;
+    align-items: center;
+    gap: 10px;
+}
+
+.button-row {
+    display: flex;
+    gap: 10px;
+    flex-grow: 1;
+    width: 540px;
+    justify-content: space-around;
+}
+
+button {
+    flex-grow: 1;
+    border-radius: 10px;
+    font-size: 30px;
+    font-family: 'Courier Prime', monospace;
+}
+
+[value="0"] {
+    flex-grow: 4;
+}
+
+[value="clear"] {
+    background-color: orange;
+}
+
+[value = "="] {
+    background-color: lightseagreen
+}
+
+.operator {
+    background-color: lightcoral
+}
