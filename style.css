@@ -40,7 +40,7 @@ body {
 
 .results {
     text-align: end;
-    padding: 10px 20px 10px 20px;
+    padding: 10px 20px;
     height: 40px;
 }
 
@@ -75,7 +75,7 @@ button {
     flex-grow: 4;
 }
 
-.clear {
+#clear {
     background-color: orange;
 }
 
