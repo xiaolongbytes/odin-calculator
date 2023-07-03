@@ -3,7 +3,6 @@ let buffer = [];
 let currentlyHeldOperator = null;
 let inputsForDisplay = [];
 let reversePolishNotation = [];
-let runningResult = 0;
 
 // Constants
 const NUMBERS = ["0", "1", "2", "3", '4', '5', "6", "7", "8", "9"];
@@ -52,11 +51,12 @@ function operate(symbol, a, b) {
 }
 
 function calculateFromReversePolishNotation(rpn) {
-    workingRPN = [...rpn]
+    let runningResult = 0;
+    const workingRPN = [...rpn]
     while (workingRPN.length > 1) {
-        [num1, num2, mathSymbol] = workingRPN.splice(0,3)
+        const [num1, num2, mathSymbol] = workingRPN.splice(0,3)
         runningResult = operate(mathSymbol, num1, num2)
-        if (runningResult == DIVIDE_BY_ZERO_ERROR) {
+        if (runningResult === DIVIDE_BY_ZERO_ERROR) {
             return DIVIDE_BY_ZERO_MESSAGE
             
         }
@@ -85,14 +85,16 @@ function clearAll() {
     currentlyHeldOperator = null;
     inputsForDisplay = [];
     reversePolishNotation = [];
-    runningResult = 0;
     updateInputDisplay([])
     updateResultDisplay(INITIAL_RESULT_DISPLAY_VALUE)
 }
 
 function doesArrayContainOperator(array) {
-    const [possibleOperator] = array;
-    return OPERATORS.includes(possibleOperator);
+    return array.some( (element) => OPERATORS.includes(element));
+}
+
+function doesArrayContainNumber(array) {
+    return array.some( (element) => NUMBERS.includes(element));
 }
 
 // After calculation is done, clicking on another button will clear the previous information and also the display
@@ -114,10 +116,11 @@ const digitButtons = document.querySelectorAll(".digit");
 digitButtons.forEach( (digitButton) => {
     digitButton.addEventListener("click", (e) => {
         const digit = e.target.getAttribute("data-value")
+        // If a digit button is clicked after an Operator button, start a new number in buffer
         if (doesArrayContainOperator(buffer)) {
             buffer = [digit]
             addToInputDisplay(digit, inputsForDisplay);
-        } else if (buffer.length == 0 || NUMBERS.includes(buffer[buffer.length-1])) {
+        } else if (buffer.length == 0 || doesArrayContainNumber(buffer)) {
             buffer.push(digit);
             addToInputDisplay(digit, inputsForDisplay);
         }
@@ -133,25 +136,31 @@ operatorButtons.forEach( (operatorButton) => {
             // If no numbers were chosen before hitting operator button, display syntax error
             clearAll();
             updateResultDisplay(SYNTAX_ERROR_MESSAGE);
-        } else if (doesArrayContainOperator(buffer)) {
+            return;
+        } 
+        if (doesArrayContainOperator(buffer)) {
             // If "characters" includes an operator, update chosen operator
             buffer = [symbol];
             currentlyHeldOperator = symbol;
-            inputsForDisplay.splice(-1,1,` ${symbol} `)
-            updateInputDisplay(inputsForDisplay)
-        } else if (currentlyHeldOperator) {
+            inputsForDisplay.splice(-1,1,` ${symbol} `);
+            updateInputDisplay(inputsForDisplay);
+            return;
+        } 
+        if (currentlyHeldOperator) {
             // For the nth operator selection (when there is an operator in the currentlyHeldOperator)
-            reversePolishNotation.push(buffer.join(""));
-            reversePolishNotation.push(currentlyHeldOperator);
+            reversePolishNotation.push(buffer.join(""), currentlyHeldOperator);
             buffer = [symbol];
             currentlyHeldOperator = symbol;
             addToInputDisplay(` ${symbol} `, inputsForDisplay);
-        } else {
+            return;
+        } 
+        if (!currentlyHeldOperator) {
             // The first operator selection (aka when currentlyHeldOperator = null)
             reversePolishNotation.push(buffer.join(""));
             buffer = [symbol];
             currentlyHeldOperator = symbol;
             addToInputDisplay(` ${symbol} `, inputsForDisplay);
+            return;
         }
     })
 })
@@ -162,8 +171,7 @@ equalButton.addEventListener("click", (e) => {
         updateResultDisplay(MISSING_NUMBERS_MESSAGE)
         return
     }
-    reversePolishNotation.push(buffer.join(""));
-    reversePolishNotation.push(currentlyHeldOperator);
+    reversePolishNotation.push(buffer.join(""), currentlyHeldOperator);
     // Signals that calculation is finished so next keystroke after "=" starts new calculation
     currentlyHeldOperator = FINISHED_CALCULATION;
     const output = calculateFromReversePolishNotation(reversePolishNotation)
